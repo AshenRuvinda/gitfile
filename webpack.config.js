@@ -1,16 +1,33 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
-require('dotenv').config();
 
 module.exports = {
+  mode: 'development',
   entry: './src/index.js',
+  target: 'electron-renderer',
+  
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
     publicPath: '/',
     clean: true,
   },
+  
+  resolve: {
+    extensions: ['.js', '.jsx'],
+    fallback: {
+      "path": require.resolve("path-browserify"),
+      "fs": false,
+      "crypto": require.resolve("crypto-browserify"),
+      "buffer": require.resolve("buffer"),
+      "process": require.resolve("process/browser"),
+      "util": require.resolve("util/"),
+      "assert": require.resolve("assert/"),
+      "os": require.resolve("os-browserify/browser")
+    }
+  },
+  
   module: {
     rules: [
       {
@@ -20,14 +37,14 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [
-              ['@babel/preset-env', { targets: { electron: '25' } }],
+              ['@babel/preset-env', { targets: "defaults" }],
               ['@babel/preset-react', { runtime: 'automatic' }]
-            ],
-          },
-        },
+            ]
+          }
+        }
       },
       {
-        test: /\.css$/,
+        test: /\.css$/i,
         use: [
           'style-loader',
           'css-loader',
@@ -35,7 +52,10 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: ['tailwindcss', 'autoprefixer'],
+                plugins: [
+                  ['tailwindcss', {}],
+                  ['autoprefixer', {}],
+                ],
               },
             },
           },
@@ -45,69 +65,48 @@ module.exports = {
         test: /\.(png|jpe?g|gif|svg|ico)$/i,
         type: 'asset/resource',
       },
-    ],
+    ]
   },
+  
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('development'),
+      'global': 'globalThis'
+    }),
+    
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+      Buffer: ['buffer', 'Buffer'],
+    }),
+    
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      inject: 'body',
-      scriptLoading: 'blocking',
-    }),
-    new webpack.EnvironmentPlugin({
-      GENIUS_API_KEY: null,
-      NODE_ENV: process.env.NODE_ENV || 'development',
-    }),
-    new webpack.ProvidePlugin({
-      global: '@ungap/global-this',
-    }),
+      inject: true,
+      scriptLoading: 'blocking'
+    })
   ],
+  
   devServer: {
-    static: [
-      {
-        directory: path.join(__dirname, 'public'),
-        publicPath: '/public',
-      },
-      {
-        directory: path.join(__dirname, 'dist'),
-        publicPath: '/',
-      },
-    ],
-    port: 8080,
-    host: 'localhost',
-    historyApiFallback: {
-      index: '/index.html'
+    static: {
+      directory: path.join(__dirname, 'public'),
     },
+    port: 8080,
     hot: true,
     liveReload: true,
-    compress: true,
-    open: false, // Don't auto-open browser
-    allowedHosts: ['localhost', '127.0.0.1'],
+    open: false,
+    allowedHosts: 'all',
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
     },
+    historyApiFallback: true,
     client: {
       logging: 'info',
-      progress: true,
-      reconnect: true,
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
     },
   },
-  mode: 'development',
-  target: 'electron-renderer',
-  devtool: 'cheap-module-source-map',
-  resolve: {
-    fallback: {
-      path: require.resolve('path-browserify'),
-      fs: false,
-      util: require.resolve('util/'),
-      crypto: require.resolve('crypto-browserify'),
-      assert: require.resolve('assert/'),
-      os: require.resolve('os-browserify/browser'),
-    },
-    extensions: ['.js', '.jsx', '.json'],
-  },
-  optimization: {
-    splitChunks: false, // Disable code splitting for Electron
-  },
+  
+  devtool: 'eval-source-map',
 };

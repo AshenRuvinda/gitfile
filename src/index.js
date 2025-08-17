@@ -1,13 +1,20 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import App from './App.js';
-import './styles/globals.css';
-import './styles/themes.css';
+
+// Fix global issues
+if (typeof global === 'undefined') {
+    window.global = window;
+}
+
+console.log('Starting Music Player React app...');
+
+// Context Providers
 import { PlayerProvider } from './context/PlayerContext.js';
 import { ThemeProvider } from './context/ThemeContext.js';
 
-console.log('Starting React app initialization...');
+// Main App Component
+import App from './App.js';
 
 class ErrorBoundary extends React.Component {
   state = { error: null, errorInfo: null };
@@ -37,7 +44,7 @@ class ErrorBoundary extends React.Component {
           justifyContent: 'center'
         }}>
           <h1 style={{ color: '#ff6b6b', marginBottom: '20px' }}>
-            React Application Error
+            🎵 Music Player Error
           </h1>
           <p style={{ marginBottom: '20px' }}>
             {this.state.error}
@@ -56,19 +63,6 @@ class ErrorBoundary extends React.Component {
           >
             Reload App
           </button>
-          {this.state.errorInfo && (
-            <pre style={{ 
-              marginTop: '20px', 
-              padding: '20px', 
-              background: '#333', 
-              borderRadius: '8px',
-              maxWidth: '80vw',
-              overflow: 'auto',
-              fontSize: '12px'
-            }}>
-              {this.state.errorInfo.componentStack}
-            </pre>
-          )}
         </div>
       );
     }
@@ -77,39 +71,31 @@ class ErrorBoundary extends React.Component {
 }
 
 const RootApp = () => {
-  useEffect(() => {
-    console.log('RootApp: Component mounted');
+  React.useEffect(() => {
+    console.log('RootApp: Music Player mounted');
     
-    // Check if we're in Electron
-    const isElectron = typeof window !== 'undefined' && window.electronAPI;
-    console.log('RootApp: Running in Electron:', isElectron);
-    
-    // Hide splash screen after a short delay
+    // Hide splash screen after successful mount
     const timer = setTimeout(() => {
       try {
-        console.log('RootApp: Attempting to hide splash screen');
         const splash = document.getElementById('splash');
         const root = document.getElementById('root');
         
         if (splash) {
-          console.log('RootApp: Hiding splash screen');
           splash.style.display = 'none';
-        } else {
-          console.log('RootApp: Splash element not found');
+          console.log('Splash screen hidden');
         }
         
         if (root) {
-          console.log('RootApp: Showing root element');
           root.style.display = 'block';
-          root.style.height = '100vh';
-          root.style.width = '100%';
-        } else {
-          console.log('RootApp: Root element not found');
         }
+        
+        // Signal successful load
+        window.dispatchEvent(new CustomEvent('react-loaded'));
+        
       } catch (error) {
-        console.error('RootApp: Error managing splash screen:', error);
+        console.error('Error managing splash screen:', error);
       }
-    }, 500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -127,40 +113,25 @@ const RootApp = () => {
   );
 };
 
-// Wait for DOM to be ready
+// Initialize the app
 const initializeApp = () => {
-  console.log('Initializing React app...');
+  console.log('Initializing Music Player...');
   
   const rootElement = document.getElementById('root');
   if (!rootElement) {
-    console.error('Root element not found in DOM');
-    
-    // Create root element if it doesn't exist
-    const newRoot = document.createElement('div');
-    newRoot.id = 'root';
-    newRoot.style.width = '100%';
-    newRoot.style.height = '100vh';
-    document.body.appendChild(newRoot);
-    console.log('Created root element');
-    
-    // Try again
-    setTimeout(() => initializeApp(), 100);
+    console.error('Root element not found');
     return;
   }
 
   try {
-    console.log('Creating React root...');
     const root = ReactDOM.createRoot(rootElement);
-    
-    console.log('Rendering RootApp...');
     root.render(<RootApp />);
-    
-    console.log('React app initialized successfully');
+    console.log('Music Player initialized successfully');
   } catch (error) {
-    console.error('Failed to initialize React app:', error);
+    console.error('Failed to initialize Music Player:', error);
     
-    // Show fallback UI
-    document.body.innerHTML = `
+    // Show error in root element
+    rootElement.innerHTML = `
       <div style="
         display: flex; 
         align-items: center; 
@@ -170,8 +141,10 @@ const initializeApp = () => {
         color: white; 
         font-family: Arial, sans-serif;
         flex-direction: column;
+        text-align: center;
       ">
-        <h1 style="color: #ff6b6b; margin-bottom: 20px;">Failed to Load React App</h1>
+        <h1 style="color: #ff6b6b; margin-bottom: 20px;">🎵 Music Player</h1>
+        <h2 style="color: #ff6b6b; margin-bottom: 20px;">Failed to Load</h2>
         <p style="margin-bottom: 20px;">Error: ${error.message}</p>
         <button onclick="location.reload()" style="
           background: linear-gradient(45deg, #667eea, #764ba2);

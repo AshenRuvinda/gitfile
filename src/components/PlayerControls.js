@@ -1,5 +1,5 @@
 import React from 'react';
-import { usePlayer } from '../context/PlayerContext';
+import { usePlayer } from '../context/PlayerContext.js';
 
 const PlayerControls = () => {
   const { isPlaying, setIsPlaying, currentTrack } = usePlayer();

@@ -12,12 +12,10 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            overflow: hidden;
         }
 
         #splash {
@@ -36,21 +34,28 @@
         }
 
         .logo {
-            font-size: 48px;
+            font-size: 64px;
             font-weight: bold;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .app-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
         }
 
         .loading {
             display: flex;
-            gap: 8px;
-            margin-top: 30px;
+            gap: 12px;
+            margin-top: 40px;
         }
 
         .loading-dot {
-            width: 12px;
-            height: 12px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background: white;
             animation: loading 1.4s infinite ease-in-out both;
@@ -61,13 +66,25 @@
 
         @keyframes loading {
             0%, 80%, 100% { 
-                transform: scale(0);
+                transform: scale(0.8);
                 opacity: 0.5;
             } 
             40% { 
-                transform: scale(1.0);
+                transform: scale(1.2);
                 opacity: 1;
             }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            font-size: 16px;
+            opacity: 0.9;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
         }
 
         #root {
@@ -78,224 +95,135 @@
             color: white;
         }
 
-        .error-container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        /* Music-themed decorative elements */
+        .music-notes {
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            opacity: 0.1;
+            font-size: 120px;
+            animation: float 6s ease-in-out infinite;
         }
 
-        .error-title {
-            font-size: 24px;
-            margin-bottom: 16px;
-            color: #ff6b6b;
+        .music-notes-2 {
+            position: absolute;
+            bottom: 20%;
+            right: 10%;
+            opacity: 0.1;
+            font-size: 80px;
+            animation: float 8s ease-in-out infinite reverse;
         }
 
-        .error-message {
-            font-size: 16px;
-            margin-bottom: 24px;
-            opacity: 0.9;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
 
-        .retry-button {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .retry-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .dev-info {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            font-size: 12px;
-            opacity: 0.7;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 12px;
-            border-radius: 6px;
-        }
-
-        /* Fallback styles when React app fails to load */
-        .fallback-container {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            text-align: center;
-            background: #1a1a1a;
-            color: white;
-        }
-
-        .fallback-container.active {
-            display: flex;
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 48px;
+                margin-bottom: 20px;
+            }
+            .app-title {
+                font-size: 24px;
+                margin-bottom: 30px;
+            }
+            .music-notes,
+            .music-notes-2 {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Splash Screen -->
+    <!-- Loading/Splash Screen -->
     <div id="splash">
-        <div class="logo">🎵 Music Player</div>
+        <!-- Decorative music notes -->
+        <div class="music-notes">♪♫</div>
+        <div class="music-notes-2">♫♪</div>
+        
+        <!-- Main content -->
+        <div class="logo">🎵</div>
+        <div class="app-title">Music Player</div>
+        
         <div class="loading">
             <div class="loading-dot"></div>
             <div class="loading-dot"></div>
             <div class="loading-dot"></div>
         </div>
-        <div class="dev-info">Loading application...</div>
+        
+        <div class="loading-text">Loading your music experience...</div>
     </div>
 
-    <!-- Main App Container -->
+    <!-- Main Application Container -->
     <div id="root"></div>
 
-    <!-- Fallback UI for when React fails to load -->
-    <div id="fallback" class="fallback-container">
-        <div class="error-container">
-            <h1 class="error-title">Unable to load Music Player</h1>
-            <p class="error-message">
-                The React application failed to initialize. This might be due to missing build files or development server not running.
-            </p>
-            <button class="retry-button" onclick="retryLoad()">
-                Retry Loading
-            </button>
-        </div>
-        <div class="dev-info">
-            Static fallback mode - Check console for errors
-        </div>
-    </div>
-
     <script>
-        console.log('Index.html loaded');
+        console.log('🎵 Music Player - Starting...');
         
-        // Check if we're in Electron
-        const isElectron = typeof window !== 'undefined' && window.electronAPI;
-        console.log('Running in Electron:', isElectron);
-
+        // Fix global variable for compatibility
+        if (typeof global === 'undefined') {
+            window.global = window;
+        }
+        
         // Track loading state
-        let loadingTimeout;
         let appLoaded = false;
 
-        function hideSplash() {
+        // Function to hide splash and show app
+        const showApp = () => {
+            if (appLoaded) return;
+            
             const splash = document.getElementById('splash');
             const root = document.getElementById('root');
             
-            if (splash) splash.style.display = 'none';
-            if (root) root.style.display = 'block';
-            
-            appLoaded = true;
-            console.log('Splash screen hidden, app should be visible');
-        }
-
-        function showFallback() {
-            if (appLoaded) return; // Don't show fallback if app already loaded
-            
-            const splash = document.getElementById('splash');
-            const fallback = document.getElementById('fallback');
-            
-            if (splash) splash.style.display = 'none';
-            if (fallback) fallback.classList.add('active');
-            
-            console.log('Showing fallback UI');
-        }
-
-        function retryLoad() {
-            console.log('Retrying application load...');
-            location.reload();
-        }
-
-        // Set up loading timeout - show fallback after 10 seconds
-        loadingTimeout = setTimeout(() => {
-            if (!appLoaded) {
-                console.warn('App failed to load within timeout, showing fallback');
-                showFallback();
-            }
-        }, 10000);
-
-        // Listen for React app to signal it's ready
-        window.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM Content Loaded');
-            
-            // Check if React root exists and has content
-            setTimeout(() => {
-                const root = document.getElementById('root');
-                if (root && root.children.length > 0) {
-                    console.log('React app detected in root');
-                    hideSplash();
-                    if (loadingTimeout) clearTimeout(loadingTimeout);
-                }
-            }, 1000);
-        });
-
-        // Listen for any React initialization
-        window.addEventListener('load', () => {
-            console.log('Window load event fired');
-            
-            // Give React a moment to render
-            setTimeout(() => {
-                const root = document.getElementById('root');
-                if (root && root.children.length > 0) {
-                    console.log('React content found after window load');
-                    hideSplash();
-                    if (loadingTimeout) clearTimeout(loadingTimeout);
-                } else {
-                    console.log('No React content found, checking for bundle...');
-                    // Check if bundle.js was loaded
-                    const scripts = document.querySelectorAll('script[src]');
-                    let bundleFound = false;
-                    scripts.forEach(script => {
-                        if (script.src.includes('bundle.js') || script.src.includes('main.js')) {
-                            bundleFound = true;
-                        }
-                    });
-                    
-                    if (!bundleFound) {
-                        console.warn('No React bundle detected');
-                        setTimeout(() => {
-                            if (!appLoaded) showFallback();
-                        }, 2000);
-                    }
-                }
-            }, 2000);
-        });
-
-        // Handle errors
-        window.addEventListener('error', (event) => {
-            console.error('JavaScript error:', event.error);
-            if (event.error && event.error.message && event.error.message.includes('React')) {
+            if (splash && root) {
+                // Smooth transition
+                splash.style.transition = 'opacity 0.5s ease-out';
+                splash.style.opacity = '0';
+                
                 setTimeout(() => {
-                    if (!appLoaded) showFallback();
-                }, 1000);
+                    splash.style.display = 'none';
+                    root.style.display = 'block';
+                    appLoaded = true;
+                    console.log('🎵 Music Player - App displayed successfully');
+                }, 500);
             }
+        };
+
+        // Listen for React app ready signal
+        window.addEventListener('react-loaded', () => {
+            console.log('🎵 Music Player - React loaded successfully');
+            setTimeout(showApp, 1000); // Small delay for smooth transition
         });
 
-        // Electron-specific initialization
-        if (isElectron) {
-            console.log('Electron environment detected');
-            
-            // Listen for Electron events
-            window.electronAPI?.receive?.('app-ready', () => {
-                console.log('Electron app ready signal received');
-            });
-        }
+        // Fallback timeout
+        setTimeout(() => {
+            if (!appLoaded) {
+                console.warn('🎵 Music Player - Loading timeout, forcing display');
+                const root = document.getElementById('root');
+                if (root && root.children.length > 0) {
+                    showApp();
+                } else {
+                    console.error('🎵 Music Player - Failed to load properly');
+                }
+            }
+        }, 15000);
 
-        // Expose global functions for debugging
-        window.debugMusicPlayer = {
-            hideSplash,
-            showFallback,
-            retryLoad,
-            isElectron,
-            appLoaded: () => appLoaded
+        // Enhanced error handling
+        window.addEventListener('error', (event) => {
+            console.error('🎵 Music Player - Error:', event.error);
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('🎵 Music Player - Unhandled Promise:', event.reason);
+        });
+
+        // Debug helpers
+        window.musicPlayerDebug = {
+            showApp,
+            appLoaded: () => appLoaded,
+            version: '1.0.0'
         };
     </script>
 </body>
