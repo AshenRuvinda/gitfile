@@ -1,0 +1,14 @@
+appId: com.musicplayer.app
+productName: Music Player
+directories:
+  output: build
+files:
+  - dist/**/*
+  - main.js
+  - preload.js
+win:
+  target: nsis
+mac:
+  target: dmg
+linux:
+  target: AppImage
