@@ -24,7 +24,12 @@ module.exports = {
       "process": require.resolve("process/browser"),
       "util": require.resolve("util/"),
       "assert": require.resolve("assert/"),
-      "os": require.resolve("os-browserify/browser")
+      "os": require.resolve("os-browserify/browser"),
+      "stream": require.resolve("stream-browserify"),
+      "url": require.resolve("url/"),
+      "querystring": require.resolve("querystring-es3"),
+      "https": require.resolve("https-browserify"),
+      "http": require.resolve("stream-http")
     }
   },
   
@@ -34,13 +39,7 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              ['@babel/preset-env', { targets: "defaults" }],
-              ['@babel/preset-react', { runtime: 'automatic' }]
-            ]
-          }
+          loader: 'babel-loader'
         }
       },
       {
@@ -77,6 +76,7 @@ module.exports = {
     new webpack.ProvidePlugin({
       process: 'process/browser',
       Buffer: ['buffer', 'Buffer'],
+      global: 'global'
     }),
     
     new HtmlWebpackPlugin({
@@ -97,6 +97,8 @@ module.exports = {
     allowedHosts: 'all',
     headers: {
       'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
     },
     historyApiFallback: true,
     client: {
